@@ -1,0 +1,1 @@
+import AuthForm from "@/components/forms/AuthForm";export const metadata={title:"Register"};export default function Register(){return <section className="bg-slate-50 py-20"><AuthForm mode="register"/></section>}

@@ -1,0 +1,3 @@
+import type {Metadata} from "next";import FlightExplorer from "@/components/flights/FlightExplorer";
+export const metadata:Metadata={title:"Explore flights",description:"Search and compare international flights from Bangladesh."};
+export default function Flights(){return <><div className="page-head"><div className="container"><span className="eyebrow">EXPLORE FLIGHTS</span><h1 className="section-title">Find your next journey</h1><p className="muted">Search dependable routes, compare fares and fly with confidence.</p></div></div><section className="container py-10"><FlightExplorer/></section></>}

@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="container py-16"><div className="h-8 w-64 animate-pulse rounded bg-slate-200"/><div className="mt-8 grid-4">{[1,2,3,4].map(x=><div className="card h-80 animate-pulse bg-slate-100" key={x}/>)}</div></div>}

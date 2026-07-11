@@ -1,0 +1,1 @@
+import AuthForm from "@/components/forms/AuthForm";export const metadata={title:"Login"};export default function Login(){return <section className="bg-slate-50 py-20"><AuthForm mode="login"/></section>}
