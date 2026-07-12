@@ -1,2 +1,8 @@
 export type Flight={id:string;airlineName:string;airlineLogo:string;flightNumber:string;title:string;shortDescription:string;fullDescription:string;departureAirport:string;departureCity:string;destinationAirport:string;destinationCity:string;departureDate:string;departureTime:string;arrivalDate:string;arrivalTime:string;aircraftType:string;travelClass:string;price:number;rating:number;availableSeats:number;baggageAllowance:string;image:string;images:string[];status:"active"|"scheduled"|"cancelled";createdBy?:string;createdAt:string};
-export type User={id:string;name:string;email:string;role:"user"|"admin"};
+export type User={id:string;name:string;email:string;role:"user"|"admin";isBlocked?:boolean};
+export type AdminUser={_id:string;name:string;email:string;role:"user"|"admin";isBlocked:boolean;createdAt:string};
+export type BookingStatus="pending"|"confirmed"|"cancelled"|"completed";
+export type PaymentStatus="pending"|"paid"|"refunded"|"failed";
+export type Booking={_id:string;bookingNumber:string;passengerName:string;passengerEmail:string;flightNumber:string;route:string;seats:number;totalAmount:number;status:BookingStatus;paymentStatus:PaymentStatus;createdAt:string};
+export type Payment={_id:string;transactionId:string;bookingNumber:string;customerEmail:string;amount:number;method:string;status:PaymentStatus;createdAt:string};
+export type AuditEntry={_id:string;actorName:string;actorEmail:string;action:string;resource:string;resourceId?:string;details:string;createdAt:string};

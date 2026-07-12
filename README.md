@@ -11,6 +11,9 @@ FlightOps is a professional full-stack airline operations and flight discovery p
 - Detailed flight pages with schedules, baggage, aircraft and related routes
 - JWT authentication in HTTP-only cookies, bcrypt password hashing and demo access
 - Protected flight creation and responsive flight management
+- Role-based Admin Center with user roles, blocking and account deletion
+- Flight approval/rejection, booking and payment status management
+- Persistent administrative audit trail for every privileged action
 - Recharts operations dashboard with stable business data
 - MongoDB/Mongoose models, Zod validation and typed Next.js API routes
 - Loading, empty, error, form and toast feedback states
@@ -52,7 +55,9 @@ Public: `/`, `/flights`, `/flights/[id]`, `/about`, `/contact`, `/login`, `/regi
 
 Protected: `/dashboard`, `/flights/add`, `/flights/manage`.
 
-API: `/api/auth/*`, `/api/flights`, `/api/flights/[id]`, `/api/dashboard/stats`, `/api/contact`.
+Admin-only: `/admin`. Seed stable admin demonstration records with `npm run seed:admin`.
+
+API: `/api/auth/*`, `/api/flights`, `/api/flights/[id]`, `/api/dashboard/stats`, `/api/contact`, and `/api/admin/*`.
 
 ## Screenshots
 

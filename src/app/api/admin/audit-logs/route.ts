@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {requireAdmin} from "@/lib/admin";import {AuditLogModel} from "@/models/AuditLog";
+export async function GET(){if(!await requireAdmin())return NextResponse.json({success:false,message:"Admin access required"},{status:403});const data=await AuditLogModel.find().sort({createdAt:-1}).limit(200).lean();return NextResponse.json({success:true,message:"Audit log loaded",data})}

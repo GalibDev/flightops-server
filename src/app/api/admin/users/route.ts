@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {requireAdmin} from "@/lib/admin";import {UserModel} from "@/models/User";
+export async function GET(){if(!await requireAdmin())return NextResponse.json({success:false,message:"Admin access required"},{status:403});const users=await UserModel.find().select("name email role isBlocked createdAt").sort({createdAt:-1}).lean();return NextResponse.json({success:true,message:"Users loaded",data:users})}

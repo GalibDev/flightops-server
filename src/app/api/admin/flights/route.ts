@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {requireAdmin} from "@/lib/admin";import {FlightModel} from "@/models/Flight";
+export async function GET(){if(!await requireAdmin())return NextResponse.json({success:false,message:"Admin access required"},{status:403});const data=await FlightModel.find().populate("createdBy","name email").sort({createdAt:-1}).lean();return NextResponse.json({success:true,message:"Flights loaded",data})}

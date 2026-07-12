@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {requireAdmin} from "@/lib/admin";import {BookingModel} from "@/models/Booking";
+export async function GET(){if(!await requireAdmin())return NextResponse.json({success:false,message:"Admin access required"},{status:403});const data=await BookingModel.find().sort({createdAt:-1}).lean();return NextResponse.json({success:true,message:"Bookings loaded",data})}
