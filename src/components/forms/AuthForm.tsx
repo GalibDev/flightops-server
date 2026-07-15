@@ -47,6 +47,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
         return toast.error(result?.message || "Authentication service is unavailable");
       }
       toast.success(result?.message || "Success");
+      window.dispatchEvent(new Event("flightops-auth"));
       router.push("/dashboard");
       router.refresh();
     } catch (error) {

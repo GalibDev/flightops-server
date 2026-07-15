@@ -1,4 +1,126 @@
-import {NextResponse} from "next/server";import {z} from "zod";import {flights} from "@/lib/flights";import {currentUser} from "@/lib/auth";import {connectDB} from "@/lib/db";import {databaseUserId} from "@/lib/user-id";import {FlightModel} from "@/models/Flight";
-const fallbackImage="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80";const input=z.object({airlineName:z.string().min(2),flightNumber:z.string().min(2),title:z.string().min(3),shortDescription:z.string().min(5),fullDescription:z.string().min(5),departureAirport:z.string().min(3),departureCity:z.string().min(2),destinationAirport:z.string().min(3),destinationCity:z.string().min(2),departureDate:z.string(),departureTime:z.string(),arrivalDate:z.string(),arrivalTime:z.string(),aircraftType:z.string(),travelClass:z.string(),price:z.coerce.number().positive(),rating:z.coerce.number().min(0).max(5),availableSeats:z.coerce.number().int().min(0),baggageAllowance:z.string(),image:z.string().url().optional().or(z.literal("")),images:z.string().optional().transform(x=>(x||"").split(",").map(y=>y.trim()).filter(Boolean)),status:z.string(),airlineLogo:z.string().optional()});
-export async function GET(){let databaseFlights:Record<string,unknown>[]=[];if(await connectDB()){const records=await FlightModel.find({status:{$in:["approved","active","scheduled"]}}).sort({createdAt:-1}).lean();databaseFlights=records.map(record=>({...record,id:String(record._id),_id:undefined,createdBy:record.createdBy?String(record.createdBy):undefined}))}const seen=new Set(databaseFlights.map(f=>f.flightNumber));const data=[...databaseFlights,...flights.filter(f=>!seen.has(f.flightNumber))];return NextResponse.json({success:true,message:"Flights loaded",data})}
-export async function POST(req:Request){const user=await currentUser();if(!user)return NextResponse.json({success:false,message:"Authentication required"},{status:401});try{const values=input.parse(await req.json());if(!await connectDB())return NextResponse.json({success:false,message:"Database unavailable"},{status:503});const ownerId=await databaseUserId(user);const image=values.image||fallbackImage;const status=user.role==="admin"&&["approved","active","scheduled"].includes(values.status)?values.status:"pending";const doc=await FlightModel.create({...values,image,images:values.images.length?values.images:[image],status,createdBy:ownerId});return NextResponse.json({success:true,message:status==="pending"?"Flight submitted for admin approval":"Flight created",data:{...doc.toObject(),id:String(doc._id)}},{status:201})}catch(error){return NextResponse.json({success:false,message:error instanceof z.ZodError?error.issues[0]?.message:"Could not create flight"},{status:400})}}
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { flights } from "@/lib/flights";
+import { currentUser } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import { databaseUserId } from "@/lib/user-id";
+import { FlightModel } from "@/models/Flight";
+const fallbackImage =
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80";
+const imageValue = z
+  .string()
+  .max(2_500_000, "Uploaded image is too large")
+  .refine(
+    (value) =>
+      !value ||
+      /^https?:\/\//i.test(value) ||
+      /^data:image\/(jpeg|png|webp);base64,/i.test(value),
+    "Use a valid image URL or uploaded image",
+  );
+const input = z.object({
+  airlineName: z.string().min(2),
+  flightNumber: z.string().min(2),
+  title: z.string().min(3),
+  shortDescription: z.string().min(5),
+  fullDescription: z.string().min(5),
+  departureAirport: z.string().min(3),
+  departureCity: z.string().min(2),
+  destinationAirport: z.string().min(3),
+  destinationCity: z.string().min(2),
+  departureDate: z.string(),
+  departureTime: z.string(),
+  arrivalDate: z.string(),
+  arrivalTime: z.string(),
+  aircraftType: z.string(),
+  travelClass: z.string(),
+  price: z.coerce.number().positive(),
+  rating: z.coerce.number().min(0).max(5),
+  availableSeats: z.coerce.number().int().min(0),
+  baggageAllowance: z.string(),
+  image: imageValue.optional().or(z.literal("")),
+  images: z
+    .string()
+    .optional()
+    .transform((x) =>
+      (x || "")
+        .split(",")
+        .map((y) => y.trim())
+        .filter(Boolean),
+    ),
+  status: z.string(),
+  airlineLogo: z.string().optional(),
+});
+export async function GET() {
+  let databaseFlights: Record<string, unknown>[] = [];
+  if (await connectDB()) {
+    const records = await FlightModel.find({
+      status: { $in: ["approved", "active", "scheduled"] },
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+    databaseFlights = records.map((record) => ({
+      ...record,
+      id: String(record._id),
+      _id: undefined,
+      createdBy: record.createdBy ? String(record.createdBy) : undefined,
+    }));
+  }
+  const seen = new Set(databaseFlights.map((f) => f.flightNumber));
+  const data = [
+    ...databaseFlights,
+    ...flights.filter((f) => !seen.has(f.flightNumber)),
+  ];
+  return NextResponse.json({ success: true, message: "Flights loaded", data });
+}
+export async function POST(req: Request) {
+  const user = await currentUser();
+  if (!user)
+    return NextResponse.json(
+      { success: false, message: "Authentication required" },
+      { status: 401 },
+    );
+  try {
+    const values = input.parse(await req.json());
+    if (!(await connectDB()))
+      return NextResponse.json(
+        { success: false, message: "Database unavailable" },
+        { status: 503 },
+      );
+    const ownerId = await databaseUserId(user);
+    const image = values.image || fallbackImage;
+    const status =
+      user.role === "admin" &&
+      ["approved", "active", "scheduled"].includes(values.status)
+        ? values.status
+        : "pending";
+    const doc = await FlightModel.create({
+      ...values,
+      image,
+      images: values.images.length ? values.images : [image],
+      status,
+      createdBy: ownerId,
+    });
+    return NextResponse.json(
+      {
+        success: true,
+        message:
+          status === "pending"
+            ? "Flight submitted for admin approval"
+            : "Flight created",
+        data: { ...doc.toObject(), id: String(doc._id) },
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof z.ZodError
+            ? error.issues[0]?.message
+            : "Could not create flight",
+      },
+      { status: 400 },
+    );
+  }
+}
