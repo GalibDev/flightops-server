@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Activity,
   BookOpenCheck,
@@ -51,22 +51,26 @@ export default function AdminConsole() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const requestId = useRef(0);
   const load = useCallback(async () => {
+    const activeRequest = ++requestId.current;
     setLoading(true);
     setError("");
     try {
       const path = tab === "audit" ? "audit-logs" : tab;
       const response = await fetch(`/api/admin/${path}`, { cache: "no-store" });
       const result = await response.json().catch(() => null);
+      if (activeRequest !== requestId.current) return;
       if (!response.ok) throw new Error(result?.message || "Could not load admin data");
       setData(result?.data ?? (tab === "overview" ? {} : []));
     } catch (reason) {
+      if (activeRequest !== requestId.current) return;
       const message = reason instanceof Error ? reason.message : "Could not load admin data";
       setError(message);
       setData(tab === "overview" ? {} : []);
       toast.error(message);
     } finally {
-      setLoading(false);
+      if (activeRequest === requestId.current) setLoading(false);
     }
   }, [tab]);
   useEffect(() => {
@@ -74,6 +78,7 @@ export default function AdminConsole() {
   }, [load]);
   function selectTab(nextTab: Tab) {
     if (nextTab === tab) return;
+    requestId.current += 1;
     setLoading(true);
     setError("");
     setData(null);
