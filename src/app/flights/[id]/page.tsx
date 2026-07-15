@@ -76,7 +76,7 @@ export default async function Detail({
               <span className="eyebrow">{f.airlineName}</span>
               <span className="flex gap-1 font-bold">
                 <Star fill="#f59e0b" color="#f59e0b" size={18} />
-                {f.rating}
+                {Number(f.rating).toFixed(1)}
               </span>
             </div>
             <h1 className="my-5 text-3xl font-black">{f.title}</h1>
@@ -159,7 +159,7 @@ export default async function Detail({
               </p>
             </div>
             <div className="text-right">
-              <b className="text-4xl">{f.rating}</b>
+              <b className="text-4xl">{Number(f.rating).toFixed(1)}</b>
               <div className="mt-1 flex text-amber-500">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <Star key={n} size={16} fill="currentColor" />

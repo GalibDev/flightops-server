@@ -24,7 +24,7 @@ export default function FlightCard({ flight }: { flight: Flight }) {
           </span>
           <span className="flex items-center gap-1 text-xs font-bold">
             <Star size={14} fill="#f59e0b" color="#f59e0b" />
-            {flight.rating}
+            {Number(flight.rating).toFixed(1)}
           </span>
         </div>
         <h3 className="text-lg font-black">
@@ -58,7 +58,7 @@ export default function FlightCard({ flight }: { flight: Flight }) {
             href={`/flights/${flight.id}`}
             className="btn btn-primary !px-3 !py-2 text-sm"
           >
-            Details
+            View Details
           </Link>
         </div>
       </div>

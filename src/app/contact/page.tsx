@@ -12,7 +12,9 @@ export default async function Contact() {
       <section className="container grid gap-8 py-12 lg:grid-cols-[.65fr_1fr]">
         <div className="card h-fit p-7">
           <h2 className="text-xl font-black">Talk with our team</h2><p className="muted my-5 text-sm">We aim to respond within one business day.</p>
-          {[[Mail, "support@flightops.com"], [Phone, "+880 1234 567890"], [MapPin, "Dhaka, Bangladesh"]].map(([Icon, text]) => <p className="mb-5 flex items-center gap-3" key={String(text)}><span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600"><Icon size={18} /></span>{String(text)}</p>)}
+          <a className="mb-5 flex items-center gap-3 transition hover:text-blue-600" href="mailto:mirza.galib.palash@gmail.com"><span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600"><Mail size={18} /></span>mirza.galib.palash@gmail.com</a>
+          <a className="mb-5 flex items-center gap-3 transition hover:text-blue-600" href="tel:+8801577088342"><span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600"><Phone size={18} /></span>01577-088342</a>
+          <p className="mb-5 flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600"><MapPin size={18} /></span>Dhaka, Bangladesh</p>
         </div>
         <ContactForm user={user ? { name: user.name, email: user.email } : null} />
       </section>
