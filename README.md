@@ -16,6 +16,20 @@ FlightOps is a full-stack airline operations and flight discovery platform built
 - **Frontend repository:** [GalibDev/flightops-client](https://github.com/GalibDev/flightops-client)
 - **Server repository:** [GalibDev/flightops-server](https://github.com/GalibDev/flightops-server)
 
+## Project screenshots
+
+### Landing page
+
+![FlightOps landing page](docs/screenshots/home.png)
+
+### Flight explorer
+
+![FlightOps flight explorer with search and filters](docs/screenshots/explore-flights.png)
+
+### Flight details and booking
+
+![FlightOps flight details and booking page](docs/screenshots/flight-details.png)
+
 ## Core capabilities
 
 ### Public experience
